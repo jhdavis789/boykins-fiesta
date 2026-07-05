@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boykin's Fiesta: 250 Beers for 250 Years</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Oswald:wght@500;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky0:#120a2a; --sky1:#2b1440; --sky2:#5c1f38; --horizon:#a34a2a; --ember:#e07b39;
+  --cream:#f5ecd7; --cream-dim:#cbbfa4; --gold:#f2b544; --flag-red:#d64541; --flag-blue:#4d7ea8;
+  --card:#241030; --card-edge:#3d2150; --stamp:#e8543f;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Lora',Georgia,serif; color:var(--cream); min-height:100vh;
+  background:linear-gradient(180deg,var(--sky0) 0%,var(--sky1) 34%,var(--sky2) 62%,var(--horizon) 88%,var(--ember) 100%);
+  background-attachment:fixed; overflow-x:hidden;
+}
+#fw{position:fixed;inset:0;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:32px 20px 0}
+header{text-align:center;padding:26px 0 6px}
+.stars{letter-spacing:14px;color:var(--gold);font-size:15px;margin-bottom:10px}
+h1{
+  font-family:'Rye',serif;font-weight:400;font-size:clamp(2.1rem,7vw,4.2rem);line-height:1.04;
+  color:var(--cream);text-shadow:0 3px 0 rgba(60,10,20,.55),0 10px 34px rgba(226,116,52,.35);
+}
+h1 .fiesta{color:var(--gold)}
+.subtitle{
+  font-family:'Oswald',sans-serif;font-weight:500;letter-spacing:.42em;text-transform:uppercase;
+  color:var(--ember);font-size:clamp(.72rem,2.4vw,1rem);margin-top:12px;
+}
+.plea{max-width:600px;margin:20px auto 0;font-size:1.06rem;line-height:1.65;color:var(--cream-dim);font-style:italic}
+.plea b{color:var(--cream);font-style:normal}
+
+.tally{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:26px 0 8px;font-family:'Oswald',sans-serif}
+.pill{background:rgba(18,8,30,.62);border:1px solid var(--card-edge);border-radius:999px;padding:9px 20px;font-size:.95rem;letter-spacing:.06em;backdrop-filter:blur(3px)}
+.pill b{color:var(--gold);font-size:1.15rem}
+.pill.yours b{color:var(--stamp)}
+.bar{max-width:520px;height:10px;margin:12px auto 0;background:rgba(18,8,30,.7);border:1px solid var(--card-edge);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--flag-red),var(--gold));transition:width .8s ease}
+
+.picker{
+  display:flex;gap:10px;justify-content:center;align-items:stretch;flex-wrap:wrap;margin:30px auto 0;
+  background:rgba(18,8,30,.55);border:1px solid var(--card-edge);border-radius:16px;padding:16px;max-width:640px;backdrop-filter:blur(4px);
+}
+.picker label{display:flex;flex-direction:column;gap:5px;font-family:'Oswald',sans-serif;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cream-dim)}
+.picker input,.picker select{
+  font-family:'Oswald',sans-serif;font-size:1.25rem;color:var(--cream);background:#170b28;border:1px solid var(--card-edge);
+  border-radius:10px;padding:8px 12px;width:130px;text-align:center;
+}
+.picker input:focus,.picker select:focus{outline:2px solid var(--gold)}
+.btn{
+  font-family:'Oswald',sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border:none;border-radius:10px;
+  padding:10px 16px;font-size:.86rem;transition:transform .12s ease,box-shadow .12s ease;
+}
+.btn:active{transform:scale(.96)}
+.btn.nav{background:#170b28;color:var(--cream);border:1px solid var(--card-edge);font-size:1.15rem;padding:8px 15px;align-self:flex-end}
+.btn.lucky{background:linear-gradient(135deg,var(--flag-red),#a12c3f);color:var(--cream);align-self:flex-end;box-shadow:0 4px 18px rgba(214,69,65,.4)}
+.btn.lucky:hover{box-shadow:0 6px 26px rgba(214,69,65,.65)}
+
+.card{
+  position:relative;margin:34px auto;background:linear-gradient(165deg,var(--card),#180a22 70%);
+  border:1px solid var(--card-edge);border-radius:20px;padding:34px 34px 30px;
+  box-shadow:0 24px 70px rgba(8,2,16,.6),inset 0 1px 0 rgba(245,236,215,.07);
+}
+.card::before{content:"";position:absolute;inset:9px;border:1px dashed rgba(242,181,68,.28);border-radius:14px;pointer-events:none}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.beer-label{font-family:'Oswald',sans-serif;font-size:.82rem;letter-spacing:.3em;text-transform:uppercase;color:var(--cream-dim)}
+.beer-label .no{color:var(--gold)}
+.beer-label .star{color:var(--flag-red);margin-right:8px}
+.glass{width:46px;height:64px;flex:none;opacity:.9}
+.year{
+  font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(4rem,14vw,7rem);line-height:1;color:var(--cream);
+  text-shadow:0 4px 0 rgba(60,10,20,.5);margin:10px 0 6px;
+}
+.era-under{font-family:'Oswald',sans-serif;letter-spacing:.3em;font-size:.72rem;color:var(--ember);text-transform:uppercase;margin-bottom:16px}
+ul.facts{list-style:none;margin-top:10px}
+ul.facts li{
+  display:flex;gap:14px;align-items:baseline;padding:13px 2px;font-size:1.08rem;line-height:1.5;
+  border-bottom:1px solid rgba(245,236,215,.09);
+}
+ul.facts li:last-child{border-bottom:none}
+ul.facts li::before{content:"●";color:var(--gold);font-size:.72rem;flex:none;transform:translateY(-2px)}
+ul.facts a{color:inherit;text-decoration:none;border-bottom:1px dotted rgba(242,181,68,.45)}
+ul.facts a:hover{color:var(--gold)}
+.src{font-size:.78rem;color:var(--cream-dim);white-space:nowrap;font-family:'Oswald',sans-serif;letter-spacing:.06em}
+.src a{color:var(--cream-dim);border-bottom:1px dotted rgba(203,191,164,.5);text-decoration:none}
+.src a:hover{color:var(--gold)}
+
+.drink-row{display:flex;align-items:center;gap:18px;margin-top:24px;flex-wrap:wrap}
+.btn.drink{
+  background:linear-gradient(135deg,var(--gold),#c8862a);color:#2a1206;font-size:1rem;padding:14px 26px;
+  box-shadow:0 6px 24px rgba(242,181,68,.35);font-weight:700;
+}
+.btn.drink:hover{box-shadow:0 8px 32px rgba(242,181,68,.6)}
+.btn.drink[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none}
+.btn.undo{background:transparent;color:var(--cream-dim);border:1px solid var(--card-edge);font-size:.72rem}
+.stamp{
+  font-family:'Oswald',sans-serif;font-weight:700;color:var(--stamp);border:3px solid var(--stamp);border-radius:8px;
+  padding:6px 16px;letter-spacing:.18em;transform:rotate(-8deg);font-size:1.05rem;display:none;
+  text-shadow:0 0 12px rgba(232,84,63,.5);box-shadow:0 0 18px rgba(232,84,63,.25),inset 0 0 12px rgba(232,84,63,.12);
+}
+.stamp.on{display:inline-block;animation:slam .35s cubic-bezier(.2,2.4,.4,1)}
+@keyframes slam{0%{transform:rotate(-8deg) scale(2.4);opacity:0}100%{transform:rotate(-8deg) scale(1);opacity:1}}
+.drunk-by{font-size:.9rem;color:var(--cream-dim);font-style:italic}
+.drunk-by b{color:var(--gold);font-style:normal}
+
+h2{
+  font-family:'Rye',serif;font-weight:400;text-align:center;font-size:clamp(1.3rem,4.5vw,2rem);margin:54px 0 6px;color:var(--cream);
+  text-shadow:0 2px 0 rgba(60,10,20,.5);
+}
+.map-sub{text-align:center;font-size:.9rem;color:var(--cream-dim);font-style:italic;margin-bottom:18px}
+.map{
+  display:grid;grid-template-columns:repeat(25,1fr);gap:4px;background:rgba(18,8,30,.55);
+  border:1px solid var(--card-edge);border-radius:16px;padding:18px;backdrop-filter:blur(4px);
+}
+.cell{
+  aspect-ratio:1;border-radius:3px;background:rgba(245,236,215,.12);border:1px solid rgba(245,236,215,.14);
+  cursor:pointer;transition:transform .1s ease,background .3s ease;
+}
+.cell:hover{transform:scale(1.35);z-index:2}
+.cell.drunk{background:var(--gold);border-color:var(--gold);box-shadow:0 0 7px rgba(242,181,68,.55)}
+.cell.mine{background:var(--stamp);border-color:var(--stamp);box-shadow:0 0 7px rgba(232,84,63,.6)}
+.cell.sel{outline:2px solid var(--cream);outline-offset:1px}
+.legend{display:flex;gap:22px;justify-content:center;margin-top:14px;font-family:'Oswald',sans-serif;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+.legend .l1 i{background:rgba(245,236,215,.14);border:1px solid rgba(245,236,215,.3)}
+.legend .l2 i{background:var(--gold)}
+.legend .l3 i{background:var(--stamp)}
+#tip{
+  position:fixed;z-index:10;pointer-events:none;background:#170b28;border:1px solid var(--gold);border-radius:8px;
+  padding:7px 12px;font-family:'Oswald',sans-serif;font-size:.78rem;letter-spacing:.05em;display:none;max-width:240px;
+}
+
+footer{position:relative;z-index:1;text-align:center;margin-top:70px;padding:50px 20px 46px;background:linear-gradient(180deg,transparent,rgba(18,6,10,.55))}
+footer img{
+  width:180px;border-radius:50%;border:4px solid var(--gold);box-shadow:0 0 0 6px rgba(242,181,68,.18),0 18px 50px rgba(8,2,16,.7);
+}
+.host-line{font-family:'Rye',serif;font-size:1.3rem;margin-top:18px;color:var(--gold)}
+.host-sub{font-style:italic;color:var(--cream-dim);margin-top:6px;font-size:.95rem}
+.fine{margin-top:26px;font-size:.72rem;color:rgba(203,191,164,.55)}
+.fine a{color:inherit}
+
+.modal-bg{position:fixed;inset:0;z-index:20;background:rgba(10,4,20,.78);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-bg.on{display:flex}
+.modal{background:var(--card);border:1px solid var(--gold);border-radius:18px;padding:30px;max-width:360px;width:92%;text-align:center}
+.modal h3{font-family:'Rye',serif;font-weight:400;color:var(--gold);font-size:1.35rem;margin-bottom:10px}
+.modal p{color:var(--cream-dim);font-size:.95rem;margin-bottom:16px}
+.modal input{
+  width:100%;font-family:'Oswald',sans-serif;font-size:1.15rem;text-align:center;color:var(--cream);
+  background:#170b28;border:1px solid var(--card-edge);border-radius:10px;padding:10px;margin-bottom:16px;
+}
+.offline{display:none;text-align:center;font-size:.78rem;color:var(--stamp);font-family:'Oswald',sans-serif;letter-spacing:.1em;margin-top:8px}
+@media (max-width:560px){
+  .card{padding:24px 18px}
+  ul.facts li{font-size:.98rem}
+  .src{white-space:normal}
+}
+@media (prefers-reduced-motion:reduce){#fw{display:none}}
+</style>
+</head>
+<body>
+<canvas id="fw"></canvas>
+
+<div class="wrap">
+  <header>
+    <div class="stars">★ ★ ★ ★ ★</div>
+    <h1>BOYKIN'S <span class="fiesta">FIESTA</span></h1>
+    <div class="subtitle">250 Beers for 250 Years &nbsp;·&nbsp; 1776 – 2025</div>
+    <p class="plea">America turns <b>250</b>. There are <b>250 beers</b> on ice. Every single one is named for a year of this republic, and every single one must go. <b>Please help us drink all 250</b> — pick your year, learn a strange little piece of our history, and put one down for the founders.</p>
+  </header>
+
+  <div class="tally">
+    <div class="pill"><b id="tDrunk">0</b> / 250 drunk</div>
+    <div class="pill"><b id="tLeft">250</b> remaining</div>
+    <div class="pill yours"><b id="tMine">0</b> were yours<span id="tName"></span></div>
+  </div>
+  <div class="bar"><i id="barFill"></i></div>
+  <div class="offline" id="offline">⚠ live sync unreachable — marks saved on this phone and will sync when back</div>
+
+  <div class="picker">
+    <button class="btn nav" id="prevB" title="previous beer">◀</button>
+    <label>Beer № (1–250)
+      <input id="numIn" type="number" min="1" max="250" value="1">
+    </label>
+    <label>Year
+      <select id="yearIn"></select>
+    </label>
+    <button class="btn nav" id="nextB" title="next beer">▶</button>
+    <button class="btn lucky" id="lucky">🍺 Surprise me</button>
+  </div>
+
+  <div class="card" id="card">
+    <div class="card-top">
+      <div>
+        <div class="beer-label"><span class="star">★</span>BEER NO <span class="no" id="beerNo">1</span> &nbsp;·&nbsp; <span id="eraLbl">REVOLUTION</span></div>
+        <div class="year" id="yearBig">1776</div>
+        <div class="era-under" id="anniv">America's 1st year</div>
+      </div>
+      <svg class="glass" viewBox="0 0 46 64" fill="none">
+        <path d="M6 2h34l-4 60H10L6 2z" stroke="#f5ecd7" stroke-width="2.4"/>
+        <path id="beerFill" d="M9 14h28l-3.2 44H12.2L9 14z" fill="#f2b544" opacity="0"/>
+        <path d="M9 8c4-3 8 2 12-1s8 2 12-1 5 2 5 2" stroke="#f5ecd7" stroke-width="2" opacity=".6"/>
+      </svg>
+    </div>
+    <ul class="facts" id="factList"></ul>
+    <div class="drink-row">
+      <button class="btn drink" id="drinkB">🍺 &nbsp;I drank this one</button>
+      <span class="stamp" id="stamp">CHEERS ✓</span>
+      <span class="drunk-by" id="drunkBy"></span>
+      <button class="btn undo" id="undoB" style="display:none">undo — it was yours</button>
+    </div>
+  </div>
+
+  <h2>The Wall of 250</h2>
+  <p class="map-sub">Gold = drunk. Red = drunk by <span id="mapName">you</span>. Tap a square to jump to its year.</p>
+  <div class="map" id="map"></div>
+  <div class="legend">
+    <span class="l1"><i></i>Remaining</span>
+    <span class="l2"><i></i>Drunk</span>
+    <span class="l3"><i></i>Yours</span>
+  </div>
+</div>
+
+<div id="tip"></div>
+
+<footer>
+  <img src="boykin.png" alt="Boykin himself">
+  <div class="host-line">Your host, Boykin</div>
+  <div class="host-sub">"They founded it. We finish it. One beer per year — don't let 1837 die alone."</div>
+  <div class="fine">Boykin's Fiesta · July 4, 2026 · America's Semiquincentennial. Facts link to their sources — tap any line. Drink responsibly-ish.</div>
+</footer>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>Who's drinking?</h3>
+    <p>First name so the wall knows whose beer this was.</p>
+    <input id="nameIn" maxlength="24" placeholder="e.g. Boykin">
+    <button class="btn drink" id="nameGo">Lock it in 🍺</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+/* ---------- config ---------- */
+var BLOB_URL = "https://jsonblob.com/api/jsonBlob/019f2f8d-cb61-7b0c-b83f-c416d3534ca2";
+var Y0=1776, Y1=2025, N=250;
+var ERAS=[[1776,1783,"REVOLUTION"],[1784,1800,"A NEW NATION"],[1801,1815,"YOUNG REPUBLIC"],[1816,1828,"GOOD FEELINGS"],[1829,1848,"MANIFEST DESTINY"],[1849,1860,"GOLD RUSH & ANTEBELLUM"],[1861,1865,"CIVIL WAR"],[1866,1877,"RECONSTRUCTION"],[1878,1899,"GILDED AGE"],[1900,1913,"PROGRESSIVE ERA"],[1914,1918,"THE GREAT WAR"],[1919,1932,"JAZZ AGE & PROHIBITION"],[1933,1938,"GREAT DEPRESSION"],[1939,1945,"WORLD WAR II"],[1946,1963,"ATOMIC AGE"],[1964,1974,"SPACE AGE"],[1975,1990,"COLD WAR FINALE"],[1991,2000,"THE NINETIES"],[2001,2012,"NEW MILLENNIUM"],[2013,2025,"MODERN ERA"]];
+function era(y){for(var i=0;i<ERAS.length;i++)if(y>=ERAS[i][0]&&y<=ERAS[i][1])return ERAS[i][2];return "AMERICA"}
+function ord(n){var s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
+
+/* ---------- state ---------- */
+var FACTS_BY_YEAR={};(window.FACTS||[]).forEach(function(r){FACTS_BY_YEAR[r.year]=r.facts});
+var dev=localStorage.getItem("bf_dev")||(Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2));
+localStorage.setItem("bf_dev",dev);
+var myName=localStorage.getItem("bf_name")||"";
+var state={drunk:{}};           // n -> {name, dev, at}
+var pending=JSON.parse(localStorage.getItem("bf_pending")||"{}"); // offline queue
+var cur=1, syncOK=true, afterName=null;
+
+/* ---------- picker ---------- */
+var yearIn=document.getElementById("yearIn");
+for(var y=Y0;y<=Y1;y++){var o=document.createElement("option");o.value=y;o.textContent=y;yearIn.appendChild(o)}
+var numIn=document.getElementById("numIn");
+function setBeer(n,push){
+  n=Math.max(1,Math.min(N,n|0)); cur=n; var y=Y0+n-1;
+  numIn.value=n; yearIn.value=y;
+  document.getElementById("beerNo").textContent=n;
+  document.getElementById("yearBig").textContent=y;
+  document.getElementById("eraLbl").textContent=era(y);
+  document.getElementById("anniv").textContent="America's "+ord(n)+" year";
+  var ul=document.getElementById("factList"); ul.innerHTML="";
+  (FACTS_BY_YEAR[y]||[{t:"Fact sheet for this year is being poured…",u:"https://en.wikipedia.org/wiki/"+y+"_in_the_United_States",s:"Wikipedia"}]).forEach(function(f){
+    var li=document.createElement("li");
+    var span=document.createElement("span");
+    var a=document.createElement("a");a.href=f.u;a.target="_blank";a.rel="noopener";a.textContent=f.t;
+    span.appendChild(a);
+    var src=document.createElement("span");src.className="src";
+    var sa=document.createElement("a");sa.href=f.u;sa.target="_blank";sa.rel="noopener";sa.textContent="["+(f.s||"source")+"]";
+    src.appendChild(sa); span.appendChild(document.createTextNode(" ")); span.appendChild(src);
+    li.appendChild(span); ul.appendChild(li);
+  });
+  if(push!==false){try{history.replaceState(null,"","?beer="+n)}catch(e){}}
+  renderDrink(); renderMap();
+}
+numIn.addEventListener("change",function(){setBeer(+numIn.value)});
+yearIn.addEventListener("change",function(){setBeer(+yearIn.value-Y0+1)});
+document.getElementById("prevB").onclick=function(){setBeer(cur-1)};
+document.getElementById("nextB").onclick=function(){setBeer(cur+1)};
+document.getElementById("lucky").onclick=function(){
+  var left=[];for(var i=1;i<=N;i++)if(!state.drunk[i])left.push(i);
+  var pool=left.length?left:Array.from({length:N},function(_,i){return i+1});
+  setBeer(pool[Math.floor(Math.random()*pool.length)]);
+  document.getElementById("card").scrollIntoView({behavior:"smooth",block:"center"});
+};
+
+/* ---------- drink card ---------- */
+function entryFor(n){return state.drunk[n]||pending[n]}
+function renderDrink(){
+  var e=entryFor(cur), mine=e&&e.dev===dev;
+  document.getElementById("stamp").className=e?"stamp on":"stamp";
+  document.getElementById("beerFill").setAttribute("opacity",e?"0":"0.9");
+  var b=document.getElementById("drinkB");
+  b.disabled=!!e; b.textContent=e?(mine?"🍺  That one was yours":"🍺  Already drunk"):"🍺  I drank this one";
+  document.getElementById("drunkBy").innerHTML=e?("drunk by <b>"+esc(e.name||"someone")+"</b>"+(e.at?" · "+new Date(e.at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):"")):"";
+  document.getElementById("undoB").style.display=mine?"inline-block":"none";
+}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+document.getElementById("drinkB").onclick=function(){
+  if(entryFor(cur))return;
+  if(!myName){afterName=function(){mark(cur)};document.getElementById("modalBg").classList.add("on");document.getElementById("nameIn").focus();return}
+  mark(cur);
+};
+document.getElementById("nameGo").onclick=function(){
+  var v=document.getElementById("nameIn").value.trim();
+  if(!v)return;
+  myName=v;localStorage.setItem("bf_name",v);
+  document.getElementById("modalBg").classList.remove("on");
+  updateNameUi(); if(afterName){afterName();afterName=null}
+};
+document.getElementById("nameIn").addEventListener("keydown",function(e){if(e.key==="Enter")document.getElementById("nameGo").click()});
+document.getElementById("undoB").onclick=function(){
+  var e=state.drunk[cur]||pending[cur];
+  if(!e||e.dev!==dev)return;
+  delete pending[cur];localStorage.setItem("bf_pending",JSON.stringify(pending));
+  if(state.drunk[cur])push({del:cur});else{renderDrink();renderMap();counts()}
+};
+function mark(n){
+  var e={name:myName,dev:dev,at:Date.now()};
+  pending[n]=e;localStorage.setItem("bf_pending",JSON.stringify(pending));
+  renderDrink();renderMap();counts();burst();
+  push();
+}
+
+/* ---------- live sync (JSONBlob, merge-on-write) ---------- */
+var pushing=false, pushQueued=null;
+function push(opts){
+  if(pushing){pushQueued=opts||pushQueued||{};return}
+  pushing=true;
+  fetch(BLOB_URL,{headers:{"Accept":"application/json"}}).then(function(r){return r.json()}).then(function(remote){
+    remote=remote&&typeof remote==="object"?remote:{};remote.drunk=remote.drunk||{};
+    Object.keys(pending).forEach(function(k){if(!remote.drunk[k])remote.drunk[k]=pending[k]});
+    if(opts&&opts.del&&remote.drunk[opts.del]&&remote.drunk[opts.del].dev===dev)delete remote.drunk[opts.del];
+    return fetch(BLOB_URL,{method:"PUT",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(remote)}).then(function(r){
+      if(!r.ok)throw 0;
+      state=remote;
+      Object.keys(pending).forEach(function(k){if(state.drunk[k])delete pending[k]});
+      localStorage.setItem("bf_pending",JSON.stringify(pending));
+      setSync(true);
+    });
+  }).catch(function(){setSync(false)}).then(function(){
+    pushing=false;
+    if(pushQueued){var q=pushQueued;pushQueued=null;push(q)}
+    counts();renderDrink();renderMap();
+  });
+}
+function poll(){
+  fetch(BLOB_URL,{headers:{"Accept":"application/json"}}).then(function(r){return r.json()}).then(function(remote){
+    if(remote&&typeof remote==="object"){state.drunk=remote.drunk||{};setSync(true);
+      Object.keys(pending).forEach(function(k){if(state.drunk[k])delete pending[k]});
+      counts();renderDrink();renderMap();
+      if(Object.keys(pending).length)push();
+    }
+  }).catch(function(){setSync(false)});
+}
+function setSync(ok){syncOK=ok;document.getElementById("offline").style.display=ok?"none":"block"}
+setInterval(poll,8000);
+
+/* ---------- counts + map ---------- */
+function allDrunk(){var m={};Object.keys(state.drunk).forEach(function(k){m[k]=state.drunk[k]});Object.keys(pending).forEach(function(k){if(!m[k])m[k]=pending[k]});return m}
+function counts(){
+  var m=allDrunk(),tot=Object.keys(m).length,mine=0;
+  Object.keys(m).forEach(function(k){if(m[k].dev===dev)mine++});
+  document.getElementById("tDrunk").textContent=tot;
+  document.getElementById("tLeft").textContent=N-tot;
+  document.getElementById("tMine").textContent=mine;
+  document.getElementById("tName").textContent=myName?(", "+myName):"";
+  document.getElementById("barFill").style.width=(tot/N*100)+"%";
+}
+var mapEl=document.getElementById("map"),tip=document.getElementById("tip"),cells=[];
+for(var i=1;i<=N;i++){
+  (function(n){
+    var c=document.createElement("div");c.className="cell";
+    c.onclick=function(){setBeer(n);document.getElementById("card").scrollIntoView({behavior:"smooth",block:"center"})};
+    c.onmousemove=function(ev){
+      var m=allDrunk()[n],y=Y0+n-1;
+      tip.style.display="block";tip.style.left=Math.min(ev.clientX+14,innerWidth-250)+"px";tip.style.top=(ev.clientY+14)+"px";
+      tip.innerHTML="Beer #"+n+" · "+y+(m?(" — drunk by "+esc(m.name||"someone")):" — still waiting");
+    };
+    c.onmouseleave=function(){tip.style.display="none"};
+    mapEl.appendChild(c);cells.push(c);
+  })(i);
+}
+function renderMap(){
+  var m=allDrunk();
+  for(var i=1;i<=N;i++){
+    var c=cells[i-1],e=m[i];
+    c.className="cell"+(e?(e.dev===dev?" mine":" drunk"):"")+(i===cur?" sel":"");
+  }
+}
+function updateNameUi(){document.getElementById("mapName").textContent=myName||"you";counts()}
+
+/* ---------- fireworks ---------- */
+var cv=document.getElementById("fw"),cx=cv.getContext("2d"),W,H,parts=[],rockets=[];
+function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight}rs();addEventListener("resize",rs);
+var COLORS=["#f2b544","#e8543f","#f5ecd7","#7fa8d4","#ff8c5a","#ffd98a"];
+function launch(x){
+  rockets.push({x:x!=null?x:W*(.08+.84*Math.random()),y:H+8,vx:(Math.random()-.5)*1.4,vy:-(H*.0075+Math.random()*H*.0045),c:COLORS[Math.floor(Math.random()*COLORS.length)],fuse:60+Math.random()*28});
+}
+function explode(x,y,c,big){
+  var n=big?110:46+Math.floor(Math.random()*36);
+  for(var i=0;i<n;i++){
+    var a=Math.random()*Math.PI*2,s=(big?1.4:1)*(1.2+Math.random()*3.4);
+    parts.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:52+Math.random()*40,c:Math.random()<.82?c:COLORS[Math.floor(Math.random()*COLORS.length)],r:1+Math.random()*1.7});
+  }
+}
+function burst(){for(var i=0;i<3;i++)setTimeout(function(){launch()},i*160)}  // celebratory on drink
+var last=0;
+function tick(t){
+  requestAnimationFrame(tick);
+  cx.clearRect(0,0,W,H);
+  if(t-last>(rockets.length+parts.length>260?1500:700)+Math.random()*900){launch();last=t}
+  for(var i=rockets.length-1;i>=0;i--){
+    var r=rockets[i];r.x+=r.vx;r.y+=r.vy;r.vy+=.028;r.fuse--;
+    cx.globalAlpha=.9;cx.fillStyle=r.c;cx.beginPath();cx.arc(r.x,r.y,1.7,0,7);cx.fill();
+    cx.globalAlpha=.25;cx.beginPath();cx.arc(r.x-r.vx*2,r.y-r.vy*2,1.2,0,7);cx.fill();
+    if(r.fuse<=0||r.vy>-.6){explode(r.x,r.y,r.c,Math.random()<.12);rockets.splice(i,1)}
+  }
+  for(var j=parts.length-1;j>=0;j--){
+    var p=parts[j];p.x+=p.vx;p.y+=p.vy;p.vy+=.035;p.vx*=.985;p.vy*=.985;p.life--;
+    cx.globalAlpha=Math.max(0,Math.min(1,p.life/46))*(Math.random()<.08?.3:1);
+    cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);cx.fill();
+    if(p.life<=0)parts.splice(j,1);
+  }
+  cx.globalAlpha=1;
+}
+if(!matchMedia("(prefers-reduced-motion: reduce)").matches)requestAnimationFrame(tick);
+
+/* ---------- boot ---------- */
+var qs=new URLSearchParams(location.search),qb=parseInt(qs.get("beer")||"0",10);
+var todayBeer=(new Date().getFullYear()<=Y1&&new Date().getFullYear()>=Y0)?(new Date().getFullYear()-Y0+1):N;
+setBeer(qb>=1&&qb<=N?qb:todayBeer,false);
+updateNameUi();counts();poll();
+if(Object.keys(pending).length)push();
+</script>
+</body>
+</html>
