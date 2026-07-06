@@ -247,7 +247,7 @@ footer img{
 <script src="data.js"></script>
 <script>
 /* ---------- config ---------- */
-var BLOB_URL = "https://jsonblob.com/api/jsonBlob/019f2f8d-cb61-7b0c-b83f-c416d3534ca2";
+var BLOB_IDS = ["019f37a5-c5ef-76aa-b049-b61594b68cbc","019f37a5-c6ed-7a0a-96ba-295faf325761","019f37a5-c7cd-7917-9f57-7011aaec8376"]; // redundant stores; any one alive keeps the game going
 var Y0=1776, Y1=2025, N=250;
 var ERAS=[[1776,1783,"REVOLUTION"],[1784,1800,"A NEW NATION"],[1801,1815,"YOUNG REPUBLIC"],[1816,1828,"GOOD FEELINGS"],[1829,1848,"MANIFEST DESTINY"],[1849,1860,"GOLD RUSH & ANTEBELLUM"],[1861,1865,"CIVIL WAR"],[1866,1877,"RECONSTRUCTION"],[1878,1899,"GILDED AGE"],[1900,1913,"PROGRESSIVE ERA"],[1914,1918,"THE GREAT WAR"],[1919,1932,"JAZZ AGE & PROHIBITION"],[1933,1938,"GREAT DEPRESSION"],[1939,1945,"WORLD WAR II"],[1946,1963,"ATOMIC AGE"],[1964,1974,"SPACE AGE"],[1975,1990,"COLD WAR FINALE"],[1991,2000,"THE NINETIES"],[2001,2012,"NEW MILLENNIUM"],[2013,2025,"MODERN ERA"]];
 function era(y){for(var i=0;i<ERAS.length;i++)if(y>=ERAS[i][0]&&y<=ERAS[i][1])return ERAS[i][2];return "AMERICA"}
@@ -336,18 +336,40 @@ function mark(n){
   push();
 }
 
-/* ---------- live sync (JSONBlob, merge-on-write) ---------- */
+/* ---------- live sync (redundant JSONBlobs, union-merge, write-to-all) ---------- */
+function blobUrl(id){return "https://jsonblob.com/api/jsonBlob/"+id}
+function fetchAll(){ // -> Promise<[{id, drunk}|null, ...]>
+  return Promise.all(BLOB_IDS.map(function(id){
+    return fetch(blobUrl(id),{headers:{"Accept":"application/json"}})
+      .then(function(r){if(!r.ok)throw 0;return r.json()})
+      .then(function(j){return {id:id, drunk:(j&&j.drunk)||{}}})
+      .catch(function(){return null});
+  }));
+}
+function unionDrunk(results,del){ // earliest mark wins per beer
+  var m={};
+  results.forEach(function(res){ if(!res)return;
+    Object.keys(res.drunk).forEach(function(k){
+      var e=res.drunk[k]; if(!e)return;
+      if(!m[k]||(e.at||0)<(m[k].at||1/0))m[k]=e;
+    });
+  });
+  Object.keys(pending).forEach(function(k){if(!m[k])m[k]=pending[k]});
+  if(del&&m[del]&&m[del].dev===dev)delete m[del];
+  return m;
+}
 var pushing=false, pushQueued=null;
 function push(opts){
   if(pushing){pushQueued=opts||pushQueued||{};return}
   pushing=true;
-  fetch(BLOB_URL,{headers:{"Accept":"application/json"}}).then(function(r){return r.json()}).then(function(remote){
-    remote=remote&&typeof remote==="object"?remote:{};remote.drunk=remote.drunk||{};
-    Object.keys(pending).forEach(function(k){if(!remote.drunk[k])remote.drunk[k]=pending[k]});
-    if(opts&&opts.del&&remote.drunk[opts.del]&&remote.drunk[opts.del].dev===dev)delete remote.drunk[opts.del];
-    return fetch(BLOB_URL,{method:"PUT",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(remote)}).then(function(r){
-      if(!r.ok)throw 0;
-      state=remote;
+  fetchAll().then(function(results){
+    var alive=results.filter(Boolean);
+    if(!alive.length)throw 0;
+    var merged=unionDrunk(results,opts&&opts.del);
+    return Promise.all(alive.map(function(res){
+      return fetch(blobUrl(res.id),{method:"PUT",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({drunk:merged})}).catch(function(){});
+    })).then(function(){
+      state={drunk:merged};
       Object.keys(pending).forEach(function(k){if(state.drunk[k])delete pending[k]});
       localStorage.setItem("bf_pending",JSON.stringify(pending));
       setSync(true);
@@ -359,12 +381,13 @@ function push(opts){
   });
 }
 function poll(){
-  fetch(BLOB_URL,{headers:{"Accept":"application/json"}}).then(function(r){return r.json()}).then(function(remote){
-    if(remote&&typeof remote==="object"){state.drunk=remote.drunk||{};setSync(true);
-      Object.keys(pending).forEach(function(k){if(state.drunk[k])delete pending[k]});
-      counts();renderDrink();renderMap();
-      if(Object.keys(pending).length)push();
-    }
+  fetchAll().then(function(results){
+    var alive=results.filter(Boolean);
+    if(!alive.length){setSync(false);return}
+    state.drunk=unionDrunk(results);setSync(true);
+    Object.keys(pending).forEach(function(k){if(state.drunk[k])delete pending[k]});
+    counts();renderDrink();renderMap();
+    if(Object.keys(pending).length)push();
   }).catch(function(){setSync(false)});
 }
 function setSync(ok){syncOK=ok;document.getElementById("offline").style.display=ok?"none":"block"}
